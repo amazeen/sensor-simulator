@@ -1,0 +1,30 @@
+{
+  "name": "sensor-simulator",
+  "version": "1.0.0",
+  "description": "Code for the IOT sensor simulator",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "mocha src/tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amazeen/sensor-simulator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/amazeen/sensor-simulator/issues"
+  },
+  "homepage": "https://github.com/amazeen/sensor-simulator#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "yargs": "^17.0.1"
+  },
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "mocha": "^8.4.0",
+    "nock": "^13.0.11"
+  }
+}
