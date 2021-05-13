@@ -20,16 +20,19 @@ const setupSimulator = (_config) => {
 
 const getIncrement = (param) => new Date().getTime() % 2 == 0 ? param.increment : 0 - param.increment
 
-const readValue = (silo, param) => values.get(silo).get(param.type) ?? range(param.min, param.max)
+const readValue = (silo, param) => values.get(silo).get(param.type) ?? generateValue(silo, param)
 
 const generateValue = (silo, param) => {
     const increment = getIncrement(param)
+
     const oldValue = values.get(silo).get(param.type) ?? range(param.min, param.max)
     let newValue = oldValue + increment
-    if(newValue > param.max) newValue = oldValue - increment
-    if(newValue < param.min) newValue = oldValue + (0 - increment)
+
+    if(newValue > param.max) newValue = param.max
+    if(newValue < param.min) newValue = param.min
 
     values.get(silo).set(param.type, newValue)
+
     return newValue
 }
 
@@ -60,7 +63,7 @@ const setupCapacity = (area, silo, param) => {
         const realValue = readValue(silo, param)
         const interval = (100 / param.sensors)
         const value = sensor * interval 
-        const active = realValue < value
+        const active = realValue > value
 
         log(`silo-${silo}:${param.type}-${sensor}`, `Read active: ${active}`)
         sendData(area, silo, {type: param.type, value, active})
@@ -68,8 +71,7 @@ const setupCapacity = (area, silo, param) => {
 
     //data changes randomly
     const dataCallback = () => {
-        const timeout = Math.random() * 10000
-        
+
         const oldValue = readValue(silo, param)
         const newValue = generateValue(silo, param)
         
@@ -81,15 +83,20 @@ const setupCapacity = (area, silo, param) => {
             if(oldSensors[i] != newSensors[i]) sensorCallback(i)
         }
 
+        const timeout = Math.random() * 10000
         setTimeout(dataCallback, timeout)
     }
     
     const interval = config.options.updateInterval * 1000
 
+    let biggestSensorTimeout = 0 
+
     // start n sersors
     for(let i = 0; i < param.sensors; i++) {
 
         const timeout = Math.random() * 10000
+
+        if(timeout > biggestSensorTimeout) biggestSensorTimeout = timeout
 
         //sensor starts up
         setTimeout(() => {
@@ -99,11 +106,11 @@ const setupCapacity = (area, silo, param) => {
             //sensor sends data every n seconds
             setInterval(() => sensorCallback(i), interval)
 
-            //start updating data after last sensor is up
-            if(i == param.sensors.length - 1) dataCallback()
         }, timeout)
     }
 
+    //start updating data after last sensor is up
+    setTimeout(dataCallback, biggestSensorTimeout)
 }
 
 module.exports = setupSimulator
