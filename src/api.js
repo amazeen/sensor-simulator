@@ -38,7 +38,7 @@ const initClient = (_config) => {
         async (error) => {
             if(error.response.status != 401) return Promise.reject(error)
 
-            log('api', 'Access token expired, requesting new one...')
+            //log('api', 'Access token expired, requesting new one...')
 
             try{
                 await refresh()
@@ -108,7 +108,7 @@ const sendData = async (area, silo, data) => {
 
     try {
         await dataApi.post(`/area/${area}/silo/${silo}/parameters`, data)
-        log(`api`, 'Sent data ' + JSON.stringify(data))
+        //log(`api`, 'Sent data ' + JSON.stringify(data))
     }
     catch(err) {
         log(`api`, 'Error sending data')
