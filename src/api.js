@@ -21,8 +21,8 @@ const setRefreshToken = (token) => refreshToken = token
 const initClient = (_config) => {
     config = _config
     
-    dataApi = axios.create({baseURL: config.options.url + '/data/'})
-    authApi = axios.create({baseURL: config.options.url + '/auth/'})
+    dataApi = axios.create({baseURL: config.options.apiUrl + '/data/'})
+    authApi = axios.create({baseURL: config.options.apiUrl + '/auth/'})
 
     // Access and refresh token management
     dataApi.interceptors.request.use(
@@ -35,19 +35,21 @@ const initClient = (_config) => {
 
     dataApi.interceptors.response.use(
         response => response,
-        error => {
+        async (error) => {
             if(error.response.status != 401) return Promise.reject(error)
 
             log('api', 'Access token expired, requesting new one...')
 
-            return refresh()
-            .then(() => {
+            try{
+                await refresh()
                 const token = getAccessToken()
                 error.config.headers.Authorization = 'Bearer ' + token
-                realTimeApi.auth.token = token
+    
                 return dataApi(error.config)
-            })
-            .catch(err => Promise.reject(err))
+            }
+            catch(err) {
+                return Promise.reject(error)
+            }
         }
     )
 }
@@ -72,10 +74,13 @@ const login = async () => {
 const refresh = async() => {
 
     try{
+        if(getRefreshToken() == '') throw 'Refresh token missing'
+        
         const response = await authApi({
             method: 'post',
             url: '/refresh',
-            headers: { Authorization: 'Bearer '+ getRefreshToken() }
+            headers: { Authorization: 'Bearer '+ getRefreshToken() },
+            data: {} // prevents setting the content-type to application/x-www-form-urlencoded
         })
 
         setAccessToken(response.data.access_token)
@@ -83,6 +88,7 @@ const refresh = async() => {
     catch(err) {
         log('api', 'Refresh token expired, logging out...')
         logout()
+        throw 'Refresh Token expired'
     }
 }
 
