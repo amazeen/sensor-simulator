@@ -1,30 +1,35 @@
 {
   "options": {
     "updateInterval": 15,
-    "username": "test",
-    "password": "test",
+    "apiUsername": "test",
+    "apiPassword": "test",
     "apiUrl": "http://localhost:3000/"
   },
   "parameters": [
     {
       "type": "temperature",
       "min": 20,
-      "max": 60
+      "max": 60,
+      "increment": 10
     },
     {
       "type": "humidity",
       "min": 40,
-      "max": 80        
+      "max": 80,
+      "increment": 5     
     },
     {
       "type": "pressure",
       "min": 1020,
-      "max": 1050
+      "max": 1050,
+      "increment": 15
     },
     {
       "type": "capacity",
       "min": 0,
-      "max": 100
+      "max": 100,
+      "increment": 12.5,
+      "sensors": 8
     }
   ],
   "silos": [
