@@ -3,7 +3,7 @@
     "updateInterval": 15,
     "apiUsername": "test",
     "apiPassword": "test",
-    "apiUrl": "http://localhost:3000/"
+    "apiUrl": "http://localhost:3000/api/v1"
   },
   "parameters": [
     {
@@ -43,6 +43,20 @@
     },
     {
       "id": "3",
+      "area": "1"
+    },{
+      "id": "4",
+      "area": "1"
+    },
+    {
+      "id": "5",
+      "area": "2"
+    },
+    {
+      "id": "6",
+      "area": "2"
+    },{
+      "id": "7",
       "area": "2"
     }
   ]
